@@ -635,3 +635,30 @@ vless://c627959a-a6ce-4699-a8d1-af7d729ecced@172.67.155.41:8080?path=%2FZEUS_PAN
     </script>
 </body>
 </html>
+
+<!-- Notification Modal Pop-up -->
+    <div id="notificationModal" class="fixed inset-0 z-[100] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <!-- Overlay backdrop -->
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="notificationOverlay"></div>
+        
+        <!-- Modal Content Card -->
+        <div id="notificationCard" class="bg-white/85 dark:bg-gray-800/90 backdrop-blur-2xl border border-white/50 dark:border-gray-700/50 p-6 rounded-3xl shadow-2xl relative z-10 w-[90%] max-w-lg transform scale-95 transition-all duration-300 max-h-[85vh] overflow-y-auto">
+            <!-- Close Button -->
+            <button id="closeNotification" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white transition-colors duration-200 z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            
+            <h3 class="text-lg md:text-xl font-bold mb-5 text-gray-800 dark:text-white flex items-center justify-start gap-2" dir="rtl">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                اطلاعیه مهم در مورد آپدیت کانفیگ‌ها
+            </h3>
+            
+            <div class="text-sm md:text-base text-gray-600 dark:text-gray-300 space-y-4 text-right leading-relaxed" dir="rtl">
+                <p><b>۱.</b> در هر آپدیت، حدوداً ۴۰ الی ۸۰ کانفیگ برای تمامی اپراتورها ساخته و در اختیار شما قرار می‌گیرد. اگر برخی کانفیگ‌ها خطای Timeout می‌دهند، به معنی خرابی آن‌ها نیست؛ بلکه این موضوع به محدودیت‌های منطقه و اپراتور شما بستگی دارد. دلیل قرار دادن این تعداد بالای کانفیگ دقیقاً همین است تا همه کاربران با هر شرایطی بتوانند به راحتی متصل شوند.</p>
+                <p><b>۲.</b> کانفیگ‌ها هر روز بین ساعت ۱۲:۳۰ تا ۴:۳۰ بامداد در لینک سابسکریپشن (Sub) آپدیت می‌شوند. برای داشتن بهترین تجربه اتصال، پیشنهاد می‌کنیم هر روز وارد لینک ساب شده و کانفیگ‌های جدید را استفاده کنید (لطفاً به تاریخ آپدیت در کنار دکمه کپی دقت کنید).</p>
+                <p><b>۳.</b> گاهی اوقات به دلیل ارتقای زیرساخت و تقویت سرورها، ممکن است کانفیگ‌ها حدوداً ۲.۵ ساعت غیرفعال شوند. این فرایند معمولاً تا ساعت ۴ بامداد تکمیل می‌شود. در صورت بروز قطعی در این ساعات، لطفاً صبور باشید و روز بعد مجدداً از سرویس استفاده کنید.</p>
+            </div>
+        </div>
+    </div>
