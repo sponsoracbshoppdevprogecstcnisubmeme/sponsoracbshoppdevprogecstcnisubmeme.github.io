@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-300">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Subscription</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Vazirmatn Font -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+
+    <!-- Tailwind Config for Dark Mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Theme Variables */
+        :root {
+            --primary-color: #2563eb; /* Blue */
+            --primary-hover: #1d4ed8;
+        }
+
+        .theme-purple { --primary-color: #9333ea; --primary-hover: #7e22ce; }
+        .theme-green { --primary-color: #16a34a; --primary-hover: #15803d; }
+        .theme-red { --primary-color: #dc2626; --primary-hover: #b91c1c; }
+        .theme-dark { --primary-color: #374151; --primary-hover: #1f2937; }
+
+        /* Apply dynamic colors */
+        .dynamic-bg { background-color: var(--primary-color) !important; }
+        .dynamic-hover:hover { background-color: var(--primary-hover) !important; }
+        .dynamic-text { color: var(--primary-color) !important; }
+        .dynamic-ring:focus { box-shadow: 0 0 0 4px rgba(var(--primary-color), 0.3) !important; }
+
+        /* Toast Animation */
+        @keyframes slide-up {
+            0% { transform: translate(-50%, 100%); opacity: 0; }
+            10% { transform: translate(-50%, 0); opacity: 1; }
+            90% { transform: translate(-50%, 0); opacity: 1; }
+            100% { transform: translate(-50%, 100%); opacity: 0; }
+        }
+        .toast-notification {
+            animation: slide-up 3s ease-in-out forwards;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .dark .glass-btn {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .dark .glass-btn:hover {
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        
+        /* Animated Background Blobs */
+        @keyframes blob-bounce {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        .bg-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.6;
+            animation: blob-bounce 20s infinite ease-in-out alternate;
+            pointer-events: none;
+        }
+        .dark .bg-blob {
+            opacity: 0.2; /* Dimmer for dark mode */
+        }
+        .blob-1 {
+            top: -10%; left: -10%; width: 50vw; height: 50vw; 
+            background: var(--primary-color); 
+        }
+        .blob-2 {
+            bottom: -10%; right: -10%; width: 60vw; height: 60vw; 
+            background: #8b5cf6; /* Purple */
+            animation-duration: 25s;
+            animation-delay: -5s;
+        }
+        .blob-3 {
+            top: 40%; right: -10%; width: 40vw; height: 40vw; 
+            background: #0ea5e9; /* Sky Blue */
+            animation-duration: 22s;
+            animation-delay: -10s;
+        }
+
+        /* Custom Modern Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.5);
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--primary-color) !important;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background-color: rgba(107, 114, 128, 0.5);
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--primary-color) !important;
+        }
+
+        /* Shake animation for incorrect password */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .shake-animation {
+            animation: shake 0.5s;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center relative overflow-x-hidden overflow-y-auto transition-colors duration-300 text-gray-800 dark:text-gray-200 py-24 md:py-8">
+
+    <!-- Animated Background Effect -->
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="bg-blob blob-1 transition-colors duration-500"></div>
+        <div class="bg-blob blob-2"></div>
+        <div class="bg-blob blob-3"></div>
+    </div>
+
+    <!-- Login Screen (Lock Pass) -->
+    <div id="loginScreen" class="w-full max-w-md bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700/50 p-8 relative z-50 mx-4 flex flex-col items-center">
+        <div class="w-20 h-20 rounded-full dynamic-bg flex items-center justify-center mb-6 shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Authentication Required</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 text-center">Please enter your 18-character access key to view your premium configurations.</p>
+        
+        <div class="w-full relative">
+            <input 
+                type="password" 
+                id="passwordInput" 
+                placeholder="Enter 18-char key..." 
+                maxlength="18"
+                class="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-3 text-center text-lg tracking-[0.2em] font-mono focus:outline-none dynamic-ring transition-all duration-300 placeholder-gray-400 text-gray-800 dark:text-gray-200"
+            >
+            <p id="errorMsg" class="text-red-500 text-xs mt-2 text-center h-4 opacity-0 transition-opacity duration-300">Invalid access key.</p>
+        </div>
+
+        <button 
+            id="loginBtn" 
+            class="w-full mt-4 dynamic-bg dynamic-hover text-white font-bold py-3 px-6 rounded-xl transition duration-300 shadow-md hover:shadow-lg focus:outline-none flex items-center justify-center gap-2"
+        >
+            <span>Unlock Panel</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- MAIN PANEL CONTENT (Hidden by default) -->
+    <div id="mainPanel" class="w-full flex-col items-center hidden relative z-10 w-full max-w-5xl">
+
+        <!-- Top Nav: Telegram Links & Settings -->
+        <nav class="absolute top-[-4rem] left-0 right-0 px-4 w-full flex justify-between items-center z-40 md:top-[-2rem]">
+            
+            <!-- Left Side: Telegram Buttons -->
+            <div class="flex gap-2">
+                <!-- Support (Phone) -->
+                <a href="https://t.me/imt7s" target="_blank" title="Support" class="glass-btn w-10 h-10 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-200 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                </a>
+                <!-- Channel (Megaphone) -->
+                <a href="https://t.me/sponsoracb" target="_blank" title="Channel" class="glass-btn w-10 h-10 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-200 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                    </svg>
+                </a>
+                <!-- Bot (Robot) -->
+                <a href="https://t.me/sponsoracb_bot" target="_blank" title="Bot" class="glass-btn w-10 h-10 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-200 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Right Side: Settings & Theme -->
+            <div class="flex gap-2 items-center relative">
+                
+                <!-- Download Apps (New) -->
+                <div class="relative">
+                    <button id="downloadToggle" title="Download Client Apps" class="glass-btn w-10 h-10 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-200 shadow-md z-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                    </button>
+                    
+                    <!-- Download Menu Dropdown -->
+                    <div id="downloadMenu" class="absolute top-14 right-0 glass-btn p-2 rounded-2xl shadow-xl flex flex-col gap-1 transition-all duration-300 opacity-0 pointer-events-none transform translate-y-[-10px] z-50 min-w-[200px]">
+                        <a href="https://play.google.com/store/apps/details?id=in.v2box.v2box" target="_blank" class="flex items-center gap-3 px-4 py-3 text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-gray-700/50 rounded-xl transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 24 24" fill="currentColor"><path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" /></svg>
+                            V2Box (Play Store)
+                        </a>
+                        <a href="https://github.com/2dust/v2rayNG/releases" target="_blank" class="flex items-center gap-3 px-4 py-3 text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-gray-700/50 rounded-xl transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800 dark:text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" /></svg>
+                            v2rayNG (GitHub)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dark Mode Toggle (Moon) -->
+                <button id="darkModeToggle" title="Toggle Dark Mode" class="glass-btn w-10 h-10 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-200 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+                
+                <!-- Settings Toggle (Gear) -->
+                <button id="settingsToggle" title="Theme Settings" class="glass-btn w-10 h-10 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-200 shadow-md z-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+
+                <!-- Color Menu Dropdown -->
+                <div id="colorMenu" class="absolute top-14 right-0 glass-btn p-3 rounded-2xl shadow-xl flex flex-row gap-3 transition-all duration-300 opacity-0 pointer-events-none transform translate-y-[-10px] z-50">
+                    <button onclick="setTheme('')" class="w-6 h-6 rounded-full bg-blue-600 shadow-md border-2 border-white dark:border-gray-600 transition transform hover:scale-110 focus:outline-none"></button>
+                    <button onclick="setTheme('theme-purple')" class="w-6 h-6 rounded-full bg-purple-600 shadow-md border-2 border-white dark:border-gray-600 transition transform hover:scale-110 focus:outline-none"></button>
+                    <button onclick="setTheme('theme-green')" class="w-6 h-6 rounded-full bg-green-600 shadow-md border-2 border-white dark:border-gray-600 transition transform hover:scale-110 focus:outline-none"></button>
+                    <button onclick="setTheme('theme-red')" class="w-6 h-6 rounded-full bg-red-600 shadow-md border-2 border-white dark:border-gray-600 transition transform hover:scale-110 focus:outline-none"></button>
+                    <button onclick="setTheme('theme-dark')" class="w-6 h-6 rounded-full bg-gray-700 shadow-md border-2 border-white dark:border-gray-600 transition transform hover:scale-110 focus:outline-none"></button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Card Content -->
+        <main class="w-full max-w-md bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700/50 overflow-hidden relative z-10 mx-auto mt-16 md:mt-4">
+            
+            <!-- Header Part -->
+            <header class="dynamic-bg p-8 pb-10 text-center text-white transition-colors duration-300 relative overflow-hidden">
+                <!-- Decorative inner shadow/light -->
+                <div class="absolute top-[-20%] left-[-10%] w-40 h-40 bg-white opacity-20 rounded-full blur-2xl"></div>
+                <div class="absolute bottom-[-20%] right-[-10%] w-32 h-32 bg-black opacity-10 rounded-full blur-xl"></div>
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 opacity-95 drop-shadow-lg relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <h1 class="text-3xl font-bold tracking-wide drop-shadow-sm mb-4 relative z-10">Premium Sub</h1>
+                
+                <!-- Glassmorphic User Info Box -->
+                <div class="mt-4 flex flex-row items-center justify-between gap-2 bg-white/20 backdrop-blur-md border border-white/40 rounded-2xl py-3 px-4 shadow-lg relative z-10">
+                    <!-- User -->
+                    <div class="flex flex-col items-center flex-1">
+                        <span class="text-[9px] md:text-[10px] text-white/80 uppercase tracking-widest mb-1">USER</span>
+                        <span class="font-extrabold text-xs md:text-sm drop-shadow-md truncate max-w-[65px]">reyhan002</span>
+                    </div>
+                    <div class="w-px h-6 bg-white/40 rounded-full"></div>
+                    <!-- Data -->
+                    <div class="flex flex-col items-center flex-1">
+                        <span class="text-[9px] md:text-[10px] text-white/80 uppercase tracking-widest mb-1">DATA</span>
+                        <span class="font-extrabold text-xs md:text-sm drop-shadow-md text-green-200 whitespace-nowrap">30 GB</span>
+                    </div>
+                    <div class="w-px h-6 bg-white/40 rounded-full"></div>
+                    <!-- Limit -->
+                    <div class="flex flex-col items-center flex-1">
+                        <span class="text-[9px] md:text-[10px] text-white/80 uppercase tracking-widest mb-1">LIMIT</span>
+                        <span class="font-extrabold text-xs md:text-sm drop-shadow-md text-yellow-200 whitespace-nowrap">Unlimited</span>
+                    </div>
+                    <div class="w-px h-6 bg-white/40 rounded-full"></div>
+                    <!-- Expire -->
+                    <div class="flex flex-col items-center flex-1">
+                        <span class="text-[9px] md:text-[10px] text-white/80 uppercase tracking-widest mb-1">EXPIRE</span>
+                        <span class="font-extrabold text-xs md:text-sm drop-shadow-md text-red-200 whitespace-nowrap">61 Days</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Body Part -->
+            <section class="p-8 text-center relative z-10">
+                <p class="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-sm md:text-base font-medium">
+                    Your high-speed server configurations are ready. Click the button below to copy all nodes to your clipboard, then import them into your client.
+                </p>
+
+                <button 
+                    id="copyBtn"
+                    class="w-full dynamic-bg dynamic-hover text-white font-bold py-4 px-6 rounded-2xl transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-lg hover:shadow-xl focus:outline-none dynamic-ring flex items-center justify-center gap-3 text-lg"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    <span id="copyBtnText">Copy All Configs</span>
+                </button>
+                
+                <!-- Tutorial Button (New) -->
+                <button id="tutorialBtn" class="mt-4 w-full glass-btn text-gray-700 dark:text-gray-200 font-bold py-3 px-6 rounded-2xl transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg focus:outline-none flex items-center justify-center gap-2 text-sm border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    <span>How to Connect (Tutorial)</span>
+                </button>
+
+                <p class="mt-6 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest"><span id="nodesTitle">TOTAL NODES</span>: 32</p>
+            </section>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="mt-8 mb-4 relative z-10 w-full flex justify-center">
+            <div class="glass-btn px-6 py-3 rounded-full shadow-sm flex items-center gap-2 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+                <span>Powered by</span>
+                <a href="https://t.me/sponsoracb" target="_blank" class="font-bold dynamic-text hover:opacity-75 transition-opacity">sponsoracb</a>
+                <span class="opacity-50 mx-1">&bull;</span>
+                <a href="https://github.com/T7SDS" target="_blank" class="font-bold hover:text-black dark:hover:text-white transition-colors flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" class="opacity-80">
+                      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    T7SDS
+                </a>
+            </div>
+        </footer>
+
+    </div> <!-- End Main Panel -->
+
+    <!-- UI Version Badge (Bottom Right Corner) -->
+    <div class="fixed bottom-3 right-4 z-10 text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-mono tracking-wider opacity-60 hover:opacity-100 transition-opacity pointer-events-none">
+        ui version 3.6.0 (Secure)
+    </div>
+
+    <!-- Tutorial Modal Pop-up -->
+    <div id="tutorialModal" class="fixed inset-0 z-[100] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <!-- Overlay backdrop -->
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="tutorialOverlay"></div>
+        
+        <!-- Modal Content Card -->
+        <div id="tutorialCard" class="bg-white/85 dark:bg-gray-800/90 backdrop-blur-2xl border border-white/50 dark:border-gray-700/50 p-6 rounded-3xl shadow-2xl relative z-10 w-[90%] max-w-md transform scale-95 transition-all duration-300">
+            <!-- Close Button -->
+            <button id="closeTutorial" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            
+            <h3 class="text-xl font-bold mb-5 text-gray-800 dark:text-white flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                Quick Guide
+            </h3>
+            
+            <ul class="text-sm md:text-base text-gray-600 dark:text-gray-300 space-y-4 text-left">
+                <li class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs mt-0.5 shadow-sm">1</span>
+                    <p><b>Download an App:</b> Tap the download icon (top right) to install <i>V2Box</i> or <i>v2rayNG</i>.</p>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs mt-0.5 shadow-sm">2</span>
+                    <p><b>Copy Configs:</b> Click the big <i>"Copy All Configs"</i> button on this page to copy your nodes.</p>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs mt-0.5 shadow-sm">3</span>
+                    <p><b>Import & Connect:</b> Open your app, find the <code>+</code> icon or <i>"Import from Clipboard"</i> option, paste the nodes, and connect!</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-gray-700 text-white px-6 py-4 rounded-2xl shadow-2xl hidden flex-row items-center gap-3 z-50 whitespace-nowrap border border-gray-700 dark:border-gray-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        <span class="font-medium">Configs copied successfully!</span>
+    </div>
+
+    <script>
+        // --- AUTHENTICATION LOGIC ---
+        // THE 18-CHARACTER ACCESS KEY (Change this if needed)
+        const CORRECT_ACCESS_KEY = "k2@Lx$5Rv!3Wp#8mBn";
+
+        const loginBtn = document.getElementById('loginBtn');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginScreen = document.getElementById('loginScreen');
+        const mainPanel = document.getElementById('mainPanel');
+        const errorMsg = document.getElementById('errorMsg');
+
+        function attemptLogin() {
+            const enteredKey = passwordInput.value.trim();
+            if (enteredKey === CORRECT_ACCESS_KEY) {
+                // Success! Hide login, show panel
+                loginScreen.classList.add('hidden');
+                mainPanel.classList.remove('hidden');
+                mainPanel.classList.add('flex'); // Because it uses flex-col
+            } else {
+                // Fail! Show error and shake animation
+                errorMsg.classList.remove('opacity-0');
+                passwordInput.classList.add('border-red-500');
+                loginScreen.classList.remove('shake-animation');
+                // Trigger reflow to restart animation
+                void loginScreen.offsetWidth;
+                loginScreen.classList.add('shake-animation');
+                
+                setTimeout(() => {
+                    errorMsg.classList.add('opacity-0');
+                    passwordInput.classList.remove('border-red-500');
+                }, 3000);
+            }
+        }
+
+        loginBtn.addEventListener('click', attemptLogin);
+        passwordInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                attemptLogin();
+            }
+        });
+
+
+        // --- UI LOGIC ---
+        // Theme switching logic
+        function setTheme(themeName) {
+            document.documentElement.classList.remove('theme-purple', 'theme-green', 'theme-red', 'theme-dark');
+            if (themeName) {
+                document.documentElement.classList.add(themeName);
+            }
+        }
+
+        // Dark Mode Toggle Logic
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        // Dropdowns Logic (Settings & Download)
+        const settingsToggle = document.getElementById('settingsToggle');
+        const colorMenu = document.getElementById('colorMenu');
+        
+        const downloadToggle = document.getElementById('downloadToggle');
+        const downloadMenu = document.getElementById('downloadMenu');
+
+        settingsToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            colorMenu.classList.toggle('opacity-0');
+            colorMenu.classList.toggle('pointer-events-none');
+            colorMenu.classList.toggle('translate-y-[-10px]');
+            // Hide other menu
+            downloadMenu.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+        });
+        
+        downloadToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            downloadMenu.classList.toggle('opacity-0');
+            downloadMenu.classList.toggle('pointer-events-none');
+            downloadMenu.classList.toggle('translate-y-[-10px]');
+            // Hide other menu
+            colorMenu.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!colorMenu.contains(e.target) && !settingsToggle.contains(e.target)) {
+                colorMenu.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+            }
+            if (!downloadMenu.contains(e.target) && !downloadToggle.contains(e.target)) {
+                downloadMenu.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+            }
+        });
+        
+        // Tutorial Modal Logic
+        const tutorialBtn = document.getElementById('tutorialBtn');
+        const tutorialModal = document.getElementById('tutorialModal');
+        const tutorialOverlay = document.getElementById('tutorialOverlay');
+        const closeTutorial = document.getElementById('closeTutorial');
+        const tutorialCard = document.getElementById('tutorialCard');
+
+        const openTutorialModal = () => {
+            tutorialModal.classList.remove('opacity-0', 'pointer-events-none');
+            tutorialCard.classList.remove('scale-95');
+            tutorialCard.classList.add('scale-100');
+        };
+
+        const closeTutorialModal = () => {
+            tutorialModal.classList.add('opacity-0', 'pointer-events-none');
+            tutorialCard.classList.remove('scale-100');
+            tutorialCard.classList.add('scale-95');
+        };
+
+        tutorialBtn.addEventListener('click', openTutorialModal);
+        closeTutorial.addEventListener('click', closeTutorialModal);
+        tutorialOverlay.addEventListener('click', closeTutorialModal);
+
+        // --- CONFIGS & COPY LOGIC ---
+        const myConfigs = `vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.19.253.144:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.19.253.144%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.19.253.144:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.19.253.144%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.19.253.144:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.19.253.144%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.19.253.144:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.19.253.144%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@digimusic7.ir:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Edigimusic7.ir%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@digimusic7.ir:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Edigimusic7.ir%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@digimusic7.ir:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Edigimusic7.ir%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@digimusic7.ir:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Edigimusic7.ir%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.164.61:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.164.61%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.164.61:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.164.61%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.164.61:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.164.61%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.164.61:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.164.61%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.16.228.155:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.16.228.155%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.16.228.155:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.16.228.155%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.16.228.155:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.16.228.155%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.16.228.155:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.16.228.155%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.24.137.130:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.24.137.130%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.24.137.130:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.24.137.130%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.24.137.130:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.24.137.130%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.24.137.130:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.24.137.130%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@panel.one-api.ir:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Epanel.one-api.ir%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@panel.one-api.ir:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Epanel.one-api.ir%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@panel.one-api.ir:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Epanel.one-api.ir%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@panel.one-api.ir:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Epanel.one-api.ir%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.2.178:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.2.178%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.2.178:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.2.178%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.2.178:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.2.178%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.2.178:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.2.178%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.177.44:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.177.44%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.177.44:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.177.44%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.177.44:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.177.44%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.177.44:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.177.44%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.16.72.105:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.16.72.105%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.16.72.105:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.16.72.105%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.16.72.105:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.16.72.105%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.16.72.105:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.16.72.105%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@rajabi.id.ir:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Erajabi.id.ir%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@rajabi.id.ir:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Erajabi.id.ir%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@rajabi.id.ir:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Erajabi.id.ir%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@rajabi.id.ir:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Erajabi.id.ir%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@159.246.55.198:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E159.246.55.198%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@159.246.55.198:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E159.246.55.198%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@159.246.55.198:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E159.246.55.198%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@159.246.55.198:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E159.246.55.198%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.146.93:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.146.93%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.146.93:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.146.93%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.146.93:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.146.93%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@172.67.146.93:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E172.67.146.93%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.19.124:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.19.124%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.19.124:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.19.124%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.19.124:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.19.124%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.19.124:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.19.124%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.11.80:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.11.80%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.11.80:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.11.80%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.11.80:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.11.80%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.11.80:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.11.80%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.13.201:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.13.201%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.13.201:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.13.201%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.13.201:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.13.201%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.13.201:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.13.201%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@energy.wallet.ir:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Eenergy.wallet.ir%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@energy.wallet.ir:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Eenergy.wallet.ir%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@energy.wallet.ir:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Eenergy.wallet.ir%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@energy.wallet.ir:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Eenergy.wallet.ir%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.17.44.130:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.17.44.130%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.17.44.130:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.17.44.130%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.17.44.130:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.17.44.130%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.17.44.130:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.17.44.130%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@109.122.198.127:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E109.122.198.127%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@109.122.198.127:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E109.122.198.127%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@109.122.198.127:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E109.122.198.127%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@109.122.198.127:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E109.122.198.127%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.17.42:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.17.42%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.17.42:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.17.42%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.17.42:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.17.42%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@104.21.17.42:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8E104.21.17.42%20%7C%20%E2%80%8E8080
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@me1.obbvie.ir:443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Eme1.obbvie.ir%20%7C%20%E2%80%8E443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@me1.obbvie.ir:8443?encryption=none&security=tls&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&insecure=0&allowInsecure=0&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Eme1.obbvie.ir%20%7C%20%E2%80%8E8443
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@me1.obbvie.ir:80?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Eme1.obbvie.ir%20%7C%20%E2%80%8E80
+vless://28f0f7d6-e584-4e76-9c1f-41630e393ea6@me1.obbvie.ir:8080?encryption=none&security=none&sni=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&fp=ios&type=ws&host=zeus-panel-ir6s1v.zeus-6gwt0u.workers.dev&path=%2FZEUS_PANEL_BOT#reyhan002%20%7C%20%E2%80%8Eme1.obbvie.ir%20%7C%20%E2%80%8E8080`; 
+        
+        const copyBtn = document.getElementById('copyBtn');
+        const toast = document.getElementById('toast');
+
+        copyBtn.addEventListener('click', () => {
+            // Create a temporary text area
+            const textArea = document.createElement("textarea");
+            textArea.value = myConfigs; // Assign the configs here
+            
+            // Hide it from view
+            textArea.style.position = "absolute";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            
+            // Select and copy
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                
+                // Show success toast
+                toast.classList.remove('hidden');
+                toast.classList.add('flex', 'toast-notification');
+                
+                // Hide toast after 3 seconds
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                    toast.classList.remove('flex', 'toast-notification');
+                }, 3000);
+                
+            } catch (err) {
+                console.error('Oops, unable to copy', err);
+                alert("Failed to copy configs. Please try again.");
+            } finally {
+                // Clean up
+                document.body.removeChild(textArea);
+            }
+        });
+    </script>
+</body>
+</html>
